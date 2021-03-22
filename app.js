@@ -1,9 +1,17 @@
+// features I want to add/change: 
+// 1. required field
+//2. dont let number of pages go beyond -1
+//3. add a card feaature where you can take notes on the book 
 const newBtn = document.getElementById('new-book-btn')
-const form = document.querySelector('#form');
+const closeBtn = document.getElementById('close-btn')
+const form = document.querySelector('form');
+const formId = document.getElementById('form')
+const bookCards = document.querySelector('.book-cards')
 
 //submit new book
-newBtn.addEventListener("click",openForm);
-form.addEventListener("submit",getBook);
+newBtn.addEventListener("click", openForm);
+form.addEventListener("submit", getBook);
+closeBtn.addEventListener("click", closeForm);
 
 
 
@@ -14,12 +22,14 @@ function Book(
     title = 'Unknown', 
     author = 'Unknown', 
     pageCount = 'Unknown', 
-    read = false
+    read = false,
+    notes = 'Unknown'
     ) {
     this.title = title;
     this.author = author;
     this.pageCount = pageCount;
     this.read = read;
+    this.notes = notes;
 }
 
 //ok
@@ -31,12 +41,19 @@ function addBookToLibrary(newBook){
         myLibrary.push(newBook);
     // }
     // else console.log('Book already exists in library');
+    console.log('addbooktolibrary is working')
+    console.log(myLibrary)
     return myLibrary;
 }
 
 //open form
 function openForm(){
-    document.getElementById("form").style.display = "block";
+    form.reset();
+    formId.style.display = "block";
+}
+
+function closeForm(){
+    formId.style.display = "none";
 }
 
 //Getting info from form and converting it to js
@@ -45,35 +62,60 @@ function getBookFromForm(){
     const author = document.querySelector('#author').value;
     const pages = document.querySelector('#pages').value;
     const read = document.querySelector('#read').checked;
-    return new Book(title,author,pages,read);
+    const notes = document.querySelector('#notes').value;
+    console.log('getbookfromform is working');
+    return new Book(title,author,pages,read,notes);
 }
 
 // fixed
 function getBook(e){
     e.preventDefault();
-    return addBookToLibrary(getBookFromForm()); 
+    console.log('getbook is working');
+    return addBookToLibrary(getBookFromForm());   
 }
 
 
-function displayBooks(library){
-    for (book in library){
-        const list = document.querySelector('#book-list');
-        const row  = document.createElement('li');
-        row.textContent = `${book.title}`
-        list.appendChild(row);
-        console.log('its working')
+function displayBooks(){
+    for (let book in myLibrary){
+        createBookCard(book)
     }
+    console.log('displayBooks is working')
 }
 
-displayBooks(myLibrary);
+function createBookCard(){
+    const card = document.createElementNS('div')
+    const cardBody = document.createElement('div');
+    const title = document.createElement('h5');
+    const author = document.createElement('h6');
+    const pages = document.createElement('h6');
+    const notes = document.createElement('p');
+    const read = document.createElement('button');
+    const deleteBtn = document.createElement('button');
 
-// //console stuff
-// const theHobbit = new Book('The Hobbit', 'JJ tolkein');
-// // console.log(theHobbit);
-// addBookToLibrary(theHobbit);
-// // addBookToLibrary(theHobbit);
-// // addBookToLibrary(theHobbit);
-// // console.log(displayBooks());
+    card.className = 'card';
+    cardBody.className = 'card-body';
+    title.className = 'card-title';
+    author.className = 'card-subtitle mb-2 text-muted';
+    pages.className = 'card-subtitle mb-2 text-muted';
+    notes.className = "card-text";
+    read.className = 'btn-group btn-sm';
+    deleteBtn.className = "btn btn-danger btn-sm float-end delete";
 
-// // console.log(myLibrary);
-// // console.table(JSON.stringify(myLibrary));
+    title.textContent = `${book.title}`;
+    author.textContent = `${book.author}`;
+    pages.textContent = `${book.pages}`;
+    notes.textContent = `${book.notes}`;
+    deleteBtn.textContent = 'X';
+
+    cardBody.appendChild(title);
+    cardBody.appendChild(author);
+    cardBody.appendChild(pages);
+    cardBody.appendChild(notes);
+    cardBody.appendChild(deleteBtn);
+    card.appendChild(cardBody)
+    bookCards.appendChild(card);
+
+    console.log('createBookCArd is working')
+
+}
+
