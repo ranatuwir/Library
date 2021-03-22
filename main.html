@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="app.js" async></script>
+    <style>
+      #form {
+        display: none;
+        
+      }
+    </style>
+    <title>Book Tracker</title>
+  </head>
+
+<body class="container">
+  <header>
+    <h1>Book Tracker</h1>
+  </header>
+      
+  <div>
+    <button id="new-book-btn" class="btn btn-success btn-lg">Add book</button>
+  </div>
+
+  <div class="container">
+    <form id="form" class="border border-light" >
+        <div class="form-group">
+          <labe>Title </labe>
+          <input type="text" id="title" class="form-control" placeholder="Add Title" required>
+        </div>
+        <div class="form-group">
+          <label>Author Name</label>
+          <input type="text" id="author" class="form-control" placeholder="Add Author Name" required>
+        </div>
+        <div class="form-group">
+          <label>Number of Pages</label>
+          <input type="number" id="pages" class="form-control" placeholder="0">
+        </div>
+        <div class="form-check">
+          <label for="read">
+            <input type="checkbox" name="read" id="read" class="form-check-input"> Read
+          </label>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary">Submit Book</button>
+      </form>
+    </div>
+  </body>
+</html>
+
