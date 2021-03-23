@@ -6,45 +6,44 @@ const newBtn = document.getElementById('new-book-btn')
 const closeBtn = document.getElementById('close-btn')
 const form = document.querySelector('form');
 const formId = document.getElementById('form')
-const bookCards = document.querySelector('.book-cards')
+const bookCards = document.getElementById('book-cards')
 
 //submit new book
 newBtn.addEventListener("click", openForm);
-form.addEventListener("submit", getBook);
+form.addEventListener("submit", addBook);
 closeBtn.addEventListener("click", closeForm);
+// document.addEventListener('DOMContentLoaded', displayBooks);
 
 
 
-let myLibrary = [];
+const myLibrary = [
+    {
+        title: 'Book One',
+        author: 'JD',
+        notes: 'lorem loreal lorrl'
+    }, 
+    {
+        title: 'Book Two',
+        author: 'JD',
+        notes: 'lorem loreal lorrl'
+    }
+];
 
 //book constructor
-function Book(
-    title = 'Unknown', 
-    author = 'Unknown', 
-    pageCount = 'Unknown', 
-    read = false,
-    notes = 'Unknown'
-    ) {
-    this.title = title;
-    this.author = author;
-    this.pageCount = pageCount;
-    this.read = read;
-    this.notes = notes;
+class Book {
+    constructor(
+        title = 'Unknown', 
+        author = 'Unknown', 
+        read = false,
+        notes = 'Unknown'
+        ) {
+        this.title = title;
+        this.author = author;
+        this.read = read;
+        this.notes = notes;
+    }
 }
 
-//ok
-// add book to library 
-// using include method or can also use some method to test if
-// title and author are the same. 
-function addBookToLibrary(newBook){
-    // if (myLibrary.includes(newBook) == false){
-        myLibrary.push(newBook);
-    // }
-    // else console.log('Book already exists in library');
-    console.log('addbooktolibrary is working')
-    console.log(myLibrary)
-    return myLibrary;
-}
 
 //open form
 function openForm(){
@@ -56,66 +55,63 @@ function closeForm(){
     formId.style.display = "none";
 }
 
-//Getting info from form and converting it to js
-function getBookFromForm(){
-    const title = document.querySelector('#title').value;
-    const author = document.querySelector('#author').value;
-    const pages = document.querySelector('#pages').value;
-    const read = document.querySelector('#read').checked;
-    const notes = document.querySelector('#notes').value;
-    console.log('getbookfromform is working');
-    return new Book(title,author,pages,read,notes);
-}
-
-// fixed
-function getBook(e){
-    e.preventDefault();
-    console.log('getbook is working');
-    return addBookToLibrary(getBookFromForm());   
-}
-
-
 function displayBooks(){
-    for (let book in myLibrary){
-        createBookCard(book)
-    }
+    myLibrary.forEach((book) => addBookToDOMList(book))
     console.log('displayBooks is working')
 }
 
-function createBookCard(){
-    const card = document.createElementNS('div')
+function addBook(e){
+    e.preventDefault();
+    console.log('addbook is working');
+
+    //getting info from form
+    const title = document.querySelector('#title').value;
+    const author = document.querySelector('#author').value;
+    const read = document.querySelector('#read').checked;
+    const notes = document.querySelector('#notes').value;
+
+    const book = new Book(title,author,read,notes);
+
+    //adding book to list
+    addBookToDOMList(book);
+    // displayBooks();
+    closeForm();
+    }
+
+
+function addBookToDOMList(book){
+    const card = document.createElement('div')
     const cardBody = document.createElement('div');
     const title = document.createElement('h5');
     const author = document.createElement('h6');
-    const pages = document.createElement('h6');
     const notes = document.createElement('p');
     const read = document.createElement('button');
     const deleteBtn = document.createElement('button');
+
+    title.textContent = book.title;
+    author.textContent = book.author;
+    notes.textContent = book.notes;
+    read.textContent = book.read;
+    deleteBtn.textContent = 'X';
 
     card.className = 'card';
     cardBody.className = 'card-body';
     title.className = 'card-title';
     author.className = 'card-subtitle mb-2 text-muted';
-    pages.className = 'card-subtitle mb-2 text-muted';
     notes.className = "card-text";
-    read.className = 'btn-group btn-sm';
+    read.className = 'btn btn-sm';
     deleteBtn.className = "btn btn-danger btn-sm float-end delete";
-
-    title.textContent = `${book.title}`;
-    author.textContent = `${book.author}`;
-    pages.textContent = `${book.pages}`;
-    notes.textContent = `${book.notes}`;
-    deleteBtn.textContent = 'X';
 
     cardBody.appendChild(title);
     cardBody.appendChild(author);
-    cardBody.appendChild(pages);
     cardBody.appendChild(notes);
+    cardBody.appendChild(read);
     cardBody.appendChild(deleteBtn);
     card.appendChild(cardBody)
     bookCards.appendChild(card);
 
-    console.log('createBookCArd is working')
+    console.log('AddBooktoDOMList is working')
 
 }
 
+console.log(myLibrary)
