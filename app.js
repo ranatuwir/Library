@@ -1,7 +1,4 @@
-// features I want to add/change: 
-// 1. required field
-//2. dont let number of pages go beyond -1
-//3. add a card feaature where you can take notes on the book 
+
 const newBtn = document.getElementById('new-book-btn')
 const closeBtn = document.getElementById('close-btn')
 const form = document.querySelector('form');
@@ -23,20 +20,22 @@ class Book {
     }
 }
 
-
-//open form
-function openForm(){
-    form.reset();
-    formId.style.display = "block";
-}
-
-//close form
-function closeForm(){
-    formId.style.display = "none";
-}
+//Library 
+let myLibrary;
 
 //UI class handles all UI methods 
 class UI {
+
+        //open form
+    static openForm(){
+        form.reset();
+        formId.style.display = "block";
+    }
+
+    //close form
+    static closeForm(){
+        formId.style.display = "none";
+    }
 
     //displays books in DOM
     static displayBooks(){
@@ -45,6 +44,7 @@ class UI {
         console.log('displayBooks is working')
     }
 
+    //adds a new book to list
     static addBookToDOMList(book){
     
         const card = document.createElement('div')
@@ -52,13 +52,12 @@ class UI {
         const title = document.createElement('h5');
         const author = document.createElement('h6');
         const notes = document.createElement('p');
-        const read = document.createElement('button');
+        const readBtn = document.createElement('button');
         const deleteBtn = document.createElement('button');
     
         title.textContent = book.title;
         author.textContent = book.author;
         notes.textContent = book.notes;
-        read.textContent = book.read;
         deleteBtn.textContent = 'X';
     
         card.className = 'card';
@@ -66,13 +65,22 @@ class UI {
         title.className = 'card-title';
         author.className = 'card-subtitle mb-2 text-muted';
         notes.className = "card-text";
-        read.className = 'btn btn-default btn-sm';
         deleteBtn.className = "btn btn-danger btn-sm float-end delete";
+
+        if (book.read) {
+            readBtn.textContent = 'Read'
+            readBtn.className = 'btn read btn-success btn-sm';
+        }
+        else {
+            readBtn.textContent = 'Not Read'
+            readBtn.className = 'btn read btn-light btn-sm';
+
+        }
     
         cardBody.appendChild(title);
         cardBody.appendChild(author);
         cardBody.appendChild(notes);
-        cardBody.appendChild(read);
+        cardBody.appendChild(readBtn);
         cardBody.appendChild(deleteBtn);
         card.appendChild(cardBody)
         bookCards.appendChild(card);
@@ -80,19 +88,38 @@ class UI {
         console.log('AddBooktoDOMList is working')
     }
 
-    static deleteBook(element){
-        if(element.classList.contains('delete')){
-            element.parentElement.remove();
+    //handles read and delete buttons
+    static handleButtons(el){
+        if(el.classList.contains('delete')){
+            el.parentElement.parentElement.remove();
+            Store.removeBook(el.parentElement.firstElementChild.textContent)
+                }
+        else if (el.classList.contains('read')) {
+            if (el.textContent === 'Read') {
+                el.textContent = 'Not Read'
+                el.className = 'btn read btn-light btn-sm';
+            }
+            else { 
+                el.textContent = 'Read' 
+                el.className = 'btn read btn-success btn-sm';
+        }  
         }
-
+        Store.saveLocal();
+        console.log(localStorage)
+        
+        
     }
 }
 
 class Store {
+
+    static saveLocal(){
+        localStorage.setItem('myLibrary', JSON.stringify(myLibrary))
+    }
     
     //need to stringify objects bc can only savestrings in local storage
     static getBooks(){
-        let myLibrary;
+
         if(localStorage.getItem('myLibrary') === null) {
             myLibrary = [];
         }
@@ -100,7 +127,7 @@ class Store {
         else {
             myLibrary = JSON.parse(localStorage.getItem('myLibrary'))
         }
-        console.log('yes')
+        console.log('getBooks is working')
         return myLibrary;
         
     }
@@ -108,19 +135,12 @@ class Store {
     static addBookToLibrary(book){
         const myLibrary = Store.getBooks();
         myLibrary.push(book);
-        localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+        Store.saveLocal()
     }
 
-    static removeBook(book, title){
-        const myLibrary = Store.getBooks();
-
-        myLibrary.forEach((title, index) => {
-            if(book.title === title){
-                myLibrary.splice(index, 1)
-            }
-        });
-
-        localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+    static removeBook(bookTitle){
+        myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
+        Store.saveLocal();
     }
 }
  
@@ -135,22 +155,28 @@ function addBook(e){
     const read = document.querySelector('#read').checked;
     const notes = document.querySelector('#notes').value;
 
-    //instantiating book
     const book = new Book(title,author,read,notes);
 
     //adding book to list 
     UI.addBookToDOMList(book);
     Store.addBookToLibrary(book);
-    closeForm();
+    UI.closeForm();
 }
 
 
 //Events
-newBtn.addEventListener("click", openForm);
+newBtn.addEventListener("click", UI.openForm);
 form.addEventListener("submit", addBook);
-closeBtn.addEventListener("click", closeForm);
+closeBtn.addEventListener("click", UI.closeForm);
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
 bookCards.addEventListener('click', (e) => { 
-    UI.deleteBook(e.target)
-    Store.removeBook(e.target.parentElement.firstElementChild.textContent)
+    UI.handleButtons(e.target)
+    // Store.removeBook(e.target.parentElement.firstElementChild.textContent)
 });
+// bookCards.addEventListener('click', (el) => {
+//     // el.preventDefault();
+//     // console.log(e.target)
+//     UI.readButton(el)
+// })
+
+console.log(localStorage);
