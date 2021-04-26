@@ -60,7 +60,7 @@ class UI {
         notes.textContent = book.notes;
         deleteBtn.textContent = 'X';
     
-        card.className = 'card';
+        card.className = 'card mt-2';
         cardBody.className = 'card-body';
         title.className = 'card-title';
         author.className = 'card-subtitle mb-2 text-muted';
