@@ -88,27 +88,6 @@ class UI {
         console.log('AddBooktoDOMList is working')
     }
 
-    //handles read and delete buttons
-    static handleButtons(el){
-        if(el.classList.contains('delete')){
-            el.parentElement.parentElement.remove();
-            Store.removeBook(el.parentElement.firstElementChild.textContent)
-                }
-        else if (el.classList.contains('read')) {
-            if (el.textContent === 'Read') {
-                el.textContent = 'Not Read'
-                el.className = 'btn read btn-light btn-sm';
-            }
-            else { 
-                el.textContent = 'Read' 
-                el.className = 'btn read btn-success btn-sm';
-        }  
-        }
-        Store.saveLocal();
-        console.log(localStorage)
-        
-        
-    }
 }
 
 class Store {
@@ -142,6 +121,15 @@ class Store {
         myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
         Store.saveLocal();
     }
+
+    static returnBook(bookTitle){
+        for (let book of myLibrary){
+            if (book.title === bookTitle){
+                return book
+            }
+        }
+        return null
+    }
 }
  
 
@@ -163,6 +151,28 @@ function addBook(e){
     UI.closeForm();
 }
 
+    //handles read and delete buttons
+function handleButtons(el){
+    if(el.classList.contains('delete')){
+        el.parentElement.parentElement.remove();
+        Store.removeBook(el.parentElement.firstElementChild.textContent)
+        }
+    else if (el.classList.contains('read')) {
+        if (el.textContent === 'Read') {
+            el.textContent = 'Not Read'
+            el.className = 'btn read btn-light btn-sm'
+            Store.returnBook(el.parentElement.firstElementChild.textContent).read = false
+        }
+        else { 
+            el.textContent = 'Read' 
+            el.className = 'btn read btn-success btn-sm'
+            Store.returnBook(el.parentElement.firstElementChild.textContent).read = true
+        }  
+    }
+    Store.saveLocal();
+    console.log(localStorage)        
+}
+
 
 //Events
 newBtn.addEventListener("click", UI.openForm);
@@ -170,13 +180,7 @@ form.addEventListener("submit", addBook);
 closeBtn.addEventListener("click", UI.closeForm);
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
 bookCards.addEventListener('click', (e) => { 
-    UI.handleButtons(e.target)
-    // Store.removeBook(e.target.parentElement.firstElementChild.textContent)
+    handleButtons(e.target)
 });
-// bookCards.addEventListener('click', (el) => {
-//     // el.preventDefault();
-//     // console.log(e.target)
-//     UI.readButton(el)
-// })
 
 console.log(localStorage);
