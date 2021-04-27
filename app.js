@@ -173,6 +173,17 @@ function handleButtons(el){
     console.log(localStorage)        
 }
 
+function restoreStorage(){
+    bookCards.innerHTML = ''
+    Store.getBooks()
+
+    for (let book of myLibrary){
+        UI.addBookToDOMList(book)
+    }
+
+}
+
+
 
 //Events
 newBtn.addEventListener("click", UI.openForm);
@@ -184,3 +195,4 @@ bookCards.addEventListener('click', (e) => {
 });
 
 console.log(localStorage);
+restoreStorage();
